@@ -1,0 +1,58 @@
+# Byte-compiled / optimized / C extensions
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.so
+
+# Virtual Environments
+.venv/
+venv/
+env/
+.env/
+
+# Environment variables
+# Ignore local environment variables file
+.env
+.env.*
+!.env.example
+
+# Project-specific directories
+# These directories are created by the application to store generated files.
+# They should not be committed to version control.
+data/
+logs/
+results/
+
+# IDE / Editor configuration
+.idea/
+.vscode/
+*.swp
+*.swo
+*.sublime-project
+*.sublime-workspace
+
+# OS-generated files
+.DS_Store
+Thumbs.db
+
+# Testing
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+pytest-report.html
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+*.egg
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
+# Distribution / packaging
+*.tar.gz
+*.zip
+*.whl
