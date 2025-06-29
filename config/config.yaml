@@ -1,0 +1,308 @@
+# Neural Pulse Scalper Configuration
+# A comprehensive crypto scalping strategy for Binance Spot Trading
+
+# API Configuration
+api:
+  # Binance API settings
+  binance:
+    testnet:
+      enabled: true  # Set to false to use mainnet
+      api_key: "YOUR_TESTNET_API_KEY"
+      api_secret: "YOUR_TESTNET_API_SECRET"
+    mainnet:
+      api_key: "YOUR_MAINNET_API_KEY"
+      api_secret: "YOUR_MAINNET_API_SECRET"
+    use_proxy: false
+    proxy: ""
+    timeout: 10000  # milliseconds
+    request_retries: 3
+
+# Trading Pairs Configuration
+trading:
+  base_pairs:
+    - "BTC"
+    - "ETH"
+    - "BNB"
+    - "USDT"
+  quote_currency: "USDT"  # Default quote currency
+  excluded_pairs:
+    - "BTCDOWN"
+    - "BTCUP"
+    - "ETHDOWN"
+    - "ETHUP"
+  custom_pairs:  # Specific pairs to trade
+    - "BTCUSDT"
+    - "ETHUSDT"
+    - "BNBUSDT"
+    - "ADAUSDT"
+    - "SOLUSDT"
+    - "DOGEUSDT"
+    - "XRPUSDT"
+    - "AVAXUSDT"
+    - "MATICUSDT"
+    - "LINKUSDT"
+
+# Strategy Parameters
+strategy:
+  name: "Neural Pulse Scalper"
+  description: "AI-inspired decision tree scalping strategy for short-term volatility"
+  version: "1.0.0"
+  
+  # Timeframes
+  timeframes:
+    primary: "1m"  # Primary timeframe for trading
+    secondary:  # Secondary timeframes for confirmation
+      - "3m"
+      - "5m"
+    global_trend: "15m"  # Timeframe to check overall trend
+  
+  # Pre-Filter Conditions
+  pre_filter:
+    min_24h_volume_usd: 10000000  # $10M minimum 24h volume
+    min_volatility_pct: 1.5  # 1.5% minimum volatility in past 30 minutes
+    check_btc_eth_trend: true  # Align with BTC/ETH trend
+    min_price: 0.00001  # Minimum price to consider trading
+    max_price: 100000  # Maximum price to consider trading
+    market_type: "spot"  # spot, margin, or futures
+  
+  # Entry Conditions
+  entry:
+    require_all_conditions: true  # All conditions must be met
+    ema_crossover:
+      enabled: true
+      fast_period: 5
+      slow_period: 20
+    rsi:
+      enabled: true
+      period: 14
+      lower_bound: 40
+      upper_bound: 60
+    bollinger_bands:
+      enabled: true
+      period: 20
+      std_dev: 2.0
+      use_for_entry: true
+    vwap:
+      enabled: true
+      period: 20
+      reclaim_threshold: 0.05  # % distance from VWAP for reclaim
+    volume:
+      enabled: true
+      spike_multiplier: 2.0  # 2x higher than average
+      lookback_periods: 20
+    candlestick_patterns:
+      enabled: true
+      patterns:
+        - "engulfing"
+        - "hammer"
+        - "three_bar_reversal"
+        - "pin_bar"
+    macd:
+      enabled: false  # Optional confirmation
+      fast_period: 12
+      slow_period: 26
+      signal_period: 9
+  
+  # Exit Conditions
+  exit:
+    take_profit:
+      enabled: true
+      percentage: 0.5  # 0.5% take profit
+      scaling:
+        enabled: false
+        levels: [0.3, 0.5, 0.7]  # Take profit at these percentages
+        percentages: [30, 30, 40]  # % of position to close at each level
+    stop_loss:
+      enabled: true
+      percentage: 0.4  # 0.4% stop loss
+    trailing_stop:
+      enabled: true
+      activation_percentage: 0.4  # Activate after 0.4% move
+      callback_rate: 0.2  # Trail by 0.2%
+    time_stop:
+      enabled: true
+      max_trade_duration_minutes: 3  # Exit after 3 minutes
+    vwap_exit:
+      enabled: true
+      threshold: 0.15  # Exit if price breaks VWAP by this %
+
+# Risk Management
+risk_management:
+  max_trades_per_day: 10
+  max_open_trades: 2
+  daily_max_drawdown_pct: 2.0  # 2% max daily drawdown
+  position_sizing:
+    type: "percentage"  # percentage, fixed, or kelly
+    percentage: 2.0  # 2% of balance per trade
+    min_position_size_usd: 10  # Minimum position size in USD
+    max_position_size_usd: 1000  # Maximum position size in USD
+  consecutive_losses:
+    pause_after: 2  # Pause after 2 consecutive losses
+    pause_duration_minutes: 30  # Pause for 30 minutes
+  max_risk_per_trade_pct: 0.5  # Maximum risk per trade
+  max_daily_risk_pct: 5.0  # Maximum daily risk
+  session_profit_target_pct: 3.0  # Stop trading after reaching this profit
+  session_loss_limit_pct: 5.0  # Stop trading after reaching this loss
+
+# Technical Indicators Configuration
+indicators:
+  ema:
+    periods: [5, 8, 13, 20, 50, 200]
+  rsi:
+    period: 14
+    overbought: 70
+    oversold: 30
+  bollinger_bands:
+    period: 20
+    std_dev: 2.0
+  vwap:
+    period: 20
+  macd:
+    fast_period: 12
+    slow_period: 26
+    signal_period: 9
+  volume_profile:
+    enabled: true
+    resolution: 20  # Number of price levels
+    lookback_periods: 100
+  support_resistance:
+    enabled: true
+    lookback_periods: 100
+    strength_threshold: 3  # Number of touches to confirm level
+
+# AI/ML Model Settings
+ai_model:
+  enabled: true
+  model_type: "decision_tree"  # decision_tree, random_forest, neural_network, xgboost
+  win_probability_threshold: 0.75  # Minimum probability to allow entry
+  training:
+    data_lookback_days: 30
+    train_test_split: 0.8  # 80% training, 20% testing
+    features:
+      - "ema_diff"
+      - "rsi"
+      - "bb_width"
+      - "bb_position"
+      - "vwap_distance"
+      - "volume_ratio"
+      - "macd_histogram"
+      - "hour_of_day"
+      - "day_of_week"
+      - "volatility"
+    target: "profit_after_3min"  # Target variable to predict
+    hyperparameter_tuning: true
+    cross_validation_folds: 5
+  prediction:
+    real_time: true
+    batch_size: 32
+    update_frequency: "daily"  # How often to retrain the model
+  model_path: "models/decision_tree_model.joblib"
+
+# Streamlit GUI Settings
+gui:
+  title: "Neural Pulse Scalper"
+  theme: "dark"  # light or dark
+  refresh_rate_seconds: 1
+  chart:
+    default_timeframe: "1m"
+    available_timeframes: ["1m", "3m", "5m", "15m", "1h"]
+    default_indicators:
+      - "ema"
+      - "bollinger_bands"
+      - "vwap"
+      - "volume"
+    candle_style: "hollow"  # hollow, heiken_ashi, or standard
+    show_trades_on_chart: true
+  dashboard:
+    layout: "wide"  # wide or centered
+    sections:
+      - "chart"
+      - "trades"
+      - "signals"
+      - "portfolio"
+      - "performance"
+    metrics:
+      - "win_rate"
+      - "profit_factor"
+      - "avg_profit"
+      - "drawdown"
+      - "sharpe_ratio"
+  notifications:
+    enabled: true
+    trade_alerts: true
+    error_alerts: true
+    performance_alerts: true
+
+# Backtesting Settings
+backtesting:
+  enabled: true
+  start_date: "2023-01-01"
+  end_date: "2023-12-31"
+  timeframes: ["1m", "3m", "5m"]
+  pairs:
+    - "BTCUSDT"
+    - "ETHUSDT"
+    - "BNBUSDT"
+  initial_balance: 10000  # USDT
+  fee_percentage: 0.1  # 0.1% trading fee
+  slippage_percentage: 0.05  # 0.05% slippage
+  data_source: "binance"  # binance or csv
+  csv_directory: "data/historical"
+  results_directory: "results/backtest"
+  plot_results: true
+  save_trades: true
+  optimization:
+    enabled: false
+    method: "grid"  # grid or bayesian
+    parameters:
+      - name: "ema_fast_period"
+        range: [3, 10]
+        step: 1
+      - name: "ema_slow_period"
+        range: [15, 30]
+        step: 5
+      - name: "rsi_lower_bound"
+        range: [30, 45]
+        step: 5
+      - name: "rsi_upper_bound"
+        range: [55, 70]
+        step: 5
+      - name: "take_profit_percentage"
+        range: [0.3, 0.8]
+        step: 0.1
+      - name: "stop_loss_percentage"
+        range: [0.3, 0.6]
+        step: 0.1
+
+# Logging Configuration
+logging:
+  level: "INFO"  # DEBUG, INFO, WARNING, ERROR, CRITICAL
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file:
+    enabled: true
+    path: "logs/neural_pulse_scalper.log"
+    max_size_mb: 10
+    backup_count: 5
+  console:
+    enabled: true
+    color: true
+  trade_log:
+    enabled: true
+    path: "logs/trades.csv"
+  error_log:
+    enabled: true
+    path: "logs/errors.log"
+
+# System Settings
+system:
+  timezone: "UTC"
+  max_cpu_usage_pct: 80
+  max_memory_usage_pct: 80
+  data_directory: "data"
+  database:
+    enabled: true
+    type: "sqlite"  # sqlite, mysql, postgresql
+    path: "data/neural_pulse_scalper.db"
+    backup_enabled: true
+    backup_frequency: "daily"
+  debug_mode: false
